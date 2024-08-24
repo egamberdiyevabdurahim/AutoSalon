@@ -1,5 +1,17 @@
 from for_print import error, enter, success, prints, command
 
+from db_settings import Database, execute_query
+
+
+def type_analyzer(user_type: int):
+    """
+    Function to analyze user type.
+    """
+    queries = "SELECT * FROM user WHERE type=%s"
+    params = (user_type,)
+    data = execute_query(queries, params)
+    return data.get("type")
+
 
 def main():
     """
