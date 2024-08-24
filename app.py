@@ -1,4 +1,3 @@
-from for_print import error, enter, success, prints, command
 
 from db_settings import Database, execute_query
 
@@ -29,15 +28,11 @@ def after_login(user_type: int, email: str, super_admin: bool=False):
         elif user_type == "User":
             pass
 
-    else:
-        print(error + "Invalid user type.")
-
 
 def main():
     """
     Main function to run the program
     """
-
     while True:
         print(command + "\n1. Login\n"
                         "2. Exit\n")
