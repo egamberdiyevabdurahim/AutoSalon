@@ -13,6 +13,26 @@ def type_analyzer(user_type: int):
     return data.get("type")
 
 
+def after_login(user_type: int, email: str, super_admin: bool=False):
+    """
+    Function to handle after login status.
+    """
+    if not super_admin:
+        user_type_name = type_analyzer(user_type)
+
+        if user_type_name == "Manager":
+            pass
+
+        elif user_type == "Shopper":
+            pass
+
+        elif user_type == "User":
+            pass
+
+    else:
+        print(error + "Invalid user type.")
+
+
 def main():
     """
     Main function to run the program
