@@ -1,7 +1,7 @@
 from for_print import error, enter, re_enter, success, prints, command
 from jsonfilemanager import JSONFIleManager
 from db_settings import Database, execute_query
-from User.super_admin_func import SuperAdmin
+from User.super_admin_func import after_login_super
 
 
 # super_admin user = super
@@ -17,7 +17,7 @@ def type_analyzer(user_type: int):
     return data.get("type")
 
 
-def after_login(user_type: int, email: str, super_admin: bool = False):
+def after_login(email: str=None, user_type: int=None, super_admin: bool = False):
     """
     Function to handle after login status.
     """
@@ -41,7 +41,7 @@ def after_login(user_type: int, email: str, super_admin: bool = False):
 
     else:
         # Handle super admin actions
-        SuperAdmin.after_login_super()
+        after_login_super()
 
 
 def login():
@@ -52,7 +52,7 @@ def login():
     password = input(command + "Password: ")
 
     if username == 'super' and password == 'super':
-        after_login(user_type=None, email=username, super_admin=True)
+        after_login(super_admin=True)
     else:
         # Fetch user data from the database
         user_query = "SELECT * FROM user WHERE username=%s AND password=%s"
