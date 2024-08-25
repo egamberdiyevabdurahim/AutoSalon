@@ -173,6 +173,7 @@ def create_manager():
 
         if email.lower() == "stop":
             return after_login_super()
+            
     verification_code = random.randint(10000, 99999)
     verification_code = str(verification_code)
     th1 = threading.Thread(target=verify_password, args=(email, verification_code,))
@@ -208,6 +209,7 @@ def create_manager():
     params = (first_name, last_name, email, phone_number, password, int(province_id), int(types.get("id")))
     execute_query(query=queries, params=params)
     print(success + "New manager created successfully.")
+    
     choice_for_branching: str = input("Do you want to add this manager to branch(y/n): ")
     if choice_for_branching.lower() == "y":
         return add_manager_to_branch(email)
@@ -226,6 +228,7 @@ def edit_manager_info():
             if str(type_["name"]).lower() == "manager":
                 type_for_manager = type_["id"]
                 break
+                
         managers = execute_query(query="SELECT * FROM users WHERE type_id=%s", params=(type_for_manager,), fetch="all")
         for manager in managers:
             print(f"{manager['id']}: {manager['first_name']} {manager['last_name']}")
@@ -265,11 +268,13 @@ def edit_manager_info():
                     f"Enter New Phone Number or tap enter for skip (current: {data_of_manager['phone_number']}): ")
                 if phone_number == "" or phone_number.isspace():
                     phone_number = data_of_manager['phone_number']
+                    
                 for province in provinces:
                     if province["id"] == data_of_manager['province_id']:
                         print(f"Current: {province['id']}. {province['name']}")
                         continue
                     print(f"{province['id']}. {province['name']}")
+                    
                 province_id: str = input(
                     f"Enter New Province ID or tap enter for skip (current: {data_of_manager['province_id']}): ")
                 if province_id == "" or province_id.isspace():
@@ -280,6 +285,7 @@ def edit_manager_info():
                         print(f"Current: {type_['id']}. {type_['name']}")
                         continue
                     print(f"{type_['id']}, {type_['name']}")
+                    
                 new_type: str = input(
                     f"Enter New Type ID or tap enter for skip (current: {data_of_manager['type_id']}): ")
                 if new_type == "" or new_type.isspace():
@@ -307,6 +313,7 @@ def delete_manager():
         if not managers:
             print(prints + "No Managers found.")
             return after_login_super()
+            
         for manager in managers:
             print(f"{manager['id']}: {manager['first_name']} {manager['last_name']}")
 
@@ -459,6 +466,7 @@ def view_all_managers(returning: bool = True):
               f"Password: {manager['password']}\n"
               f"Created At: {manager['created_at']}")
         print("-" * 20)
+        
     if returning:
         return after_login_super()
 
@@ -471,6 +479,7 @@ def view_all_statistics_of_company():
     if data_of_type is None:
         print(error + "No branch found.")
         return after_login_super()
+        
     print("Statistics of Company")
     return after_login_super()
 
@@ -483,6 +492,7 @@ def view_all_statistics_of_one_branch():
     if data_of_type is None:
         print(error + "No branch found.")
         return after_login_super()
+        
     print("Statistics of One Branch")
     return after_login_super()
 
@@ -495,6 +505,7 @@ def view_all_cars_of_company():
     if data_of_type is None:
         print(error + "No branch found.")
         return after_login_super()
+        
     queries = "SELECT * FROM car"
     data = execute_query(query=queries)
     for car in data:
@@ -533,12 +544,14 @@ def view_all_cars_of_one_branch():
     if branch_input.isdigit():
         branch_id = int(branch_input)
         data_of_branch = execute_query(query="SELECT * FROM branch WHERE id=%s", params=(branch_id,), fetch="one")
+        
         if data_of_branch is None:
             print(error + "Branch not found.")
             return view_all_cars_of_one_branch()
 
     else:
         data_of_branch = execute_query(query="SELECT * FROM branch WHERE name=%s", params=(branch_input,), fetch="one")
+        
         if data_of_branch is None:
             print(error + "Branch not found.")
             return view_all_cars_of_one_branch()
