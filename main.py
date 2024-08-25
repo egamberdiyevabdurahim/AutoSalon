@@ -2,6 +2,7 @@ from for_print import error, enter, re_enter, success, prints, command
 from jsonfilemanager import JSONFIleManager
 from db_settings import Database, execute_query
 from User.super_admin_func import after_login_super
+from User.manager_func import after_login_admin
 
 
 # super_admin user = super
@@ -11,10 +12,10 @@ def type_analyzer(user_type: int):
     """
     Function to analyze user type.
     """
-    queries = "SELECT * FROM user WHERE type=%s"
+    queries = "SELECT * FROM user_type WHERE id=%s"
     params = (user_type,)
-    data = execute_query(queries, params)
-    return data.get("type")
+    data = execute_query(queries, params, "one")
+    return data.get("name")
 
 
 def after_login(email: str=None, user_type: int=None, super_admin: bool = False):
@@ -26,7 +27,7 @@ def after_login(email: str=None, user_type: int=None, super_admin: bool = False)
 
         if user_type_name == "Manager":
             print(success + f"Welcome, {user_type_name}!")
-            # Add Manager-specific actions here
+            after_login_admin(email)
 
         elif user_type_name == "Shopper":
             print(success + f"Welcome, {user_type_name}!")
@@ -48,14 +49,14 @@ def login():
     """
     Function to handle user login.
     """
-    username = input(command + "Username: ")
+    username = input(command + "Email: ")
     password = input(command + "Password: ")
 
     if username == 'super' and password == 'super':
         after_login(super_admin=True)
     else:
         # Fetch user data from the database
-        user_query = "SELECT * FROM user WHERE username=%s AND password=%s"
+        user_query = "SELECT * FROM users WHERE email=%s AND password=%s"
         user_params = (username, password)
         user_data = execute_query(user_query, user_params, "one")
 
