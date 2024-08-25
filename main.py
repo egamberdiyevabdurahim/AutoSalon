@@ -1,5 +1,4 @@
 from for_print import error, enter, re_enter, success, prints, command
-from jsonfilemanager import JSONFIleManager
 from db_settings import Database, execute_query
 from User.super_admin_func import after_login_super
 
@@ -17,7 +16,7 @@ def type_analyzer(user_type: int):
     return data.get("type")
 
 
-def after_login(email: str=None, user_type: int=None, super_admin: bool = False):
+def after_login(email: str = None, user_type: int = None, super_admin: bool = False) -> None:
     """
     Function to handle after login status.
     """
@@ -82,11 +81,9 @@ def main():
         elif choice == "2":
             print(success + "Exiting...")
             break
-
         else:
             print(error + "Invalid choice. Please try again.")
 
 
 if __name__ == '__main__':
     main()
-

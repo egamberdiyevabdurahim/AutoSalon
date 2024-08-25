@@ -1,8 +1,29 @@
-from for_print import error, enter, success, prints, command, re_enter
+import random
+import threading
 
+from for_print import error, enter, success, prints, command, re_enter
+from User.emailmanager import EmailManager
 from db_settings import Database, execute_query
 
-from .addition import email_details, phone_details
+from User.addition import email_details, phone_details
+
+
+def check_code(verification_code):
+    received_code = input('Enter code that you received: ')
+    if received_code == verification_code:
+        return True
+    else:
+        check_code(verification_code)
+        return False
+
+
+def verify_password(email, verification_code):
+    receiver = email
+    subject = 'Verification Code'
+    message = f'Here is your verification code: {verification_code}'
+    if EmailManager(receiver, subject, message).send_email():
+        print('Email is sent!\n')
+        return True
 
 
 def create_branch():
@@ -12,13 +33,15 @@ def create_branch():
     name: str = input("Enter Name: ")
 
     mess: bool = True
+    # checks if the username is not empty
     while name == "" or name.isspace():
+        # if empty returns Error
         print(error + "Invalid Name enter stop for Exit")
-        name = input(re_enter+"Re-Enter: ")
-
+        name = input(re_enter + "Re-Enter: ")
+        # if exit is entered, goes to after_login_super
         if name.lower() == "stop":
             mess: bool = False
-
+    # if branch_name not empty writes it to the database table
     if mess:
         queries = "INSERT INTO branch (name) VALUES (%s)"
         params = (name,)
@@ -136,15 +159,6 @@ def create_manager():
 
         if last_name.lower() == "stop":
             return after_login_super()
-
-    email: str = input("Enter Email: ")
-    while not email.endswith(email_details):
-        print(error + "Invalid Email enter stop for Exit")
-        email = input(re_enter + "Re-Enter: ")
-
-        if email.lower() == "stop":
-            return after_login_super()
-
     phone_number: str = input("Enter Phone Number: ")
     while not phone_number.startswith(phone_details):
         print(error + "Invalid Phone Number enter stop for Exit")
@@ -152,29 +166,41 @@ def create_manager():
 
         if phone_number.lower() == "stop":
             return after_login_super()
+    email: str = input("Enter Email: ")
+    while not email.endswith(email_details):
+        print(error + "Invalid Email enter stop for Exit")
+        email = input(re_enter + "Re-Enter: ")
 
-    queries_province = "SELECT * FROM province"
-    data = execute_query(query=queries_province, fetch="all")
-    datas = []
-    for column in data:
-        print(f"{column[0]}: {column[1]}")
-        datas.append(column[0])
-
-    province_id: str = input("Enter Province ID: ")
-    while province_id not in str(datas[0]):
-        print(error + "Invalid Province ID enter stop for Exit")
-        province_id = input(re_enter + "Re-Enter: ")
-
-        if province_id.lower() == "stop":
+        if email.lower() == "stop":
             return after_login_super()
+    verification_code = random.randint(10000, 99999)
+    verification_code = str(verification_code)
+    th1 = threading.Thread(target=verify_password, args=(email, verification_code,))
+    th1.start()
+    if check_code(verification_code):
+        print('Your code has been verified!')
+        queries_province = "SELECT * FROM province"
+        data = execute_query(query=queries_province, fetch="all")
+        datas = []
+        for column in data:
+            print(f"{column[0]}: {column[1]}")
+            datas.append(column[0])
 
-    password : str = input("Enter New Password: ")
-    while len(password) < 8:
-        print(error + "Password must be at least 8 characters long.\n"
-                            "stop for Exit")
-        password = input(re_enter + "Re-Enter password: ")
-        if password.lower() == "stop":
-            return after_login_super()
+        province_id: str = input("Enter Province ID: ")
+        while province_id not in str(datas[0]):
+            print(error + "Invalid Province ID enter stop for Exit")
+            province_id = input(re_enter + "Re-Enter: ")
+
+            if province_id.lower() == "stop":
+                return after_login_super()
+
+        password: str = input("Enter New Password: ")
+        while len(password) < 8:
+            print(error + "Password must be at least 8 characters long.\n"
+                          "stop for Exit")
+            password = input(re_enter + "Re-Enter password: ")
+            if password.lower() == "stop":
+                return after_login_super()
 
     types = execute_query("SELECT * FROM user_type WHERE name=%s", ("Manager",), "one")
 
@@ -221,11 +247,13 @@ def edit_manager_info():
 
                 provinces = execute_query(query="SELECT * FROM province", fetch="all")
 
-                first_name: str = input(f"Enter New First Name or tap enter for skip (current: {data_of_manager['first_name']}): ")
+                first_name: str = input(
+                    f"Enter New First Name or tap enter for skip (current: {data_of_manager['first_name']}): ")
                 if first_name == "" or first_name.isspace():
                     first_name = data_of_manager['first_name']
 
-                last_name: str = input(f"Enter New Last Name or tap enter for skip (current: {data_of_manager['last_name']}): ")
+                last_name: str = input(
+                    f"Enter New Last Name or tap enter for skip (current: {data_of_manager['last_name']}): ")
                 if last_name == "" or last_name.isspace():
                     last_name = data_of_manager['last_name']
 
@@ -233,7 +261,8 @@ def edit_manager_info():
                 if email == "" or email.isspace():
                     email = data_of_manager['email']
 
-                phone_number: str = input(f"Enter New Phone Number or tap enter for skip (current: {data_of_manager['phone_number']}): ")
+                phone_number: str = input(
+                    f"Enter New Phone Number or tap enter for skip (current: {data_of_manager['phone_number']}): ")
                 if phone_number == "" or phone_number.isspace():
                     phone_number = data_of_manager['phone_number']
                 for province in provinces:
@@ -241,7 +270,8 @@ def edit_manager_info():
                         print(f"Current: {province['id']}. {province['name']}")
                         continue
                     print(f"{province['id']}. {province['name']}")
-                province_id: str = input(f"Enter New Province ID or tap enter for skip (current: {data_of_manager['province_id']}): ")
+                province_id: str = input(
+                    f"Enter New Province ID or tap enter for skip (current: {data_of_manager['province_id']}): ")
                 if province_id == "" or province_id.isspace():
                     province_id = data_of_manager['province_id']
 
@@ -250,7 +280,8 @@ def edit_manager_info():
                         print(f"Current: {type_['id']}. {type_['name']}")
                         continue
                     print(f"{type_['id']}, {type_['name']}")
-                new_type: str = input(f"Enter New Type ID or tap enter for skip (current: {data_of_manager['type_id']}): ")
+                new_type: str = input(
+                    f"Enter New Type ID or tap enter for skip (current: {data_of_manager['type_id']}): ")
                 if new_type == "" or new_type.isspace():
                     new_type = data_of_manager["type_id"]
 
@@ -269,8 +300,10 @@ def delete_manager():
     """
     while True:
         print(prints + "All Managers:")
-        type_for_manager = execute_query(query="SELECT id FROM user_type WHERE name=%s", params=("Manager",), fetch="one")
-        managers = execute_query(query="SELECT * FROM users WHERE type_id=%s", params=(type_for_manager[0],), fetch="all")
+        type_for_manager = execute_query(query="SELECT id FROM user_type WHERE name=%s", params=("Manager",),
+                                         fetch="one")
+        managers = execute_query(query="SELECT * FROM users WHERE type_id=%s", params=(type_for_manager[0],),
+                                 fetch="all")
         if not managers:
             print(prints + "No Managers found.")
             return after_login_super()
@@ -292,7 +325,7 @@ def delete_manager():
         print(error + "Invalid Manager ID.")
 
 
-def add_manager_to_branch(manager_email: str=None):
+def add_manager_to_branch(manager_email: str = None):
     """
     Function to add a manager to a branch.
     """
@@ -400,7 +433,7 @@ def remove_manager_from_branch():
     return after_login_super()
 
 
-def view_all_managers(returning: bool=True):
+def view_all_managers(returning: bool = True):
     """
     Function to view all managers.
     """
