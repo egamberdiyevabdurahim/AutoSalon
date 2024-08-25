@@ -2,6 +2,7 @@ from for_print import error, enter, success, prints, command
 
 from db_settings import Database, execute_query
 
+
 class SuperAdmin:
     @staticmethod
     def after_login_super():
