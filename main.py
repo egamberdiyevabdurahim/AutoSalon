@@ -60,7 +60,7 @@ def login():
         user_data = execute_query(user_query, user_params, "one")
 
         if user_data:
-            user_type = user_data.get("type")
+            user_type = user_data.get("type_id")
             email = user_data.get("email")
             after_login(user_type=user_type, email=email)
         else:
