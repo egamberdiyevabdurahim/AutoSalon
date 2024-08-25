@@ -2,10 +2,10 @@ import random
 import threading
 
 from for_print import error, enter, success, prints, command, re_enter
-from User.emailmanager import EmailManager
 from db_settings import Database, execute_query
 
 from User.addition import email_details, phone_details
+from User.emailmanager import EmailManager
 
 
 def check_code(verification_code):
