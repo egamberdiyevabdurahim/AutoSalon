@@ -1,5 +1,11 @@
+from for_print import error, enter, re_enter, success, prints, command
 from jsonfilemanager import JSONFIleManager
 from db_settings import Database, execute_query
+from User.super_admin_func import SuperAdmin
+
+
+#super_admin user = super
+#super_admin password= super
 
 
 def type_analyzer(user_type: int):
@@ -12,7 +18,7 @@ def type_analyzer(user_type: int):
     return data.get("type")
 
 
-def after_login(user_type: int, email: str, super_admin: bool=False):
+def after_login(user_type: int, email: str, super_admin: bool = False):
     """
     Function to handle after login status.
     """
@@ -29,6 +35,13 @@ def after_login(user_type: int, email: str, super_admin: bool=False):
             pass
 
 
+def login():
+    username = input(command + "Username: ")
+    password = input(command + "Password: ")
+    if username == 'super' and password == 'super':
+        SuperAdmin.after_login_super()
+
+
 def main():
     """
     Main function to run the program
@@ -39,8 +52,7 @@ def main():
         choice: str = input(enter + "Enter: ")
 
         if choice == "1":
-            pass
-            # login()
+            login()
 
         elif choice == "2":
             print(success + "Exiting...")
@@ -48,3 +60,7 @@ def main():
 
         else:
             print(error + "Invalid choice. Please try again.")
+
+
+if __name__ == '__main__':
+    main()
