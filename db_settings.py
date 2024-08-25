@@ -14,7 +14,7 @@ class Database:
         try:
             # Connect to the database
             self.conn = psycopg2.connect(**DB_CONFIG)
-            self.cursor = self.conn.cursor()
+            self.cursor = self.conn.cursor(cursor_factory=DictCursor)
         except OperationalError as e:
             print(f"Error connecting to the database: {e}")
             raise e

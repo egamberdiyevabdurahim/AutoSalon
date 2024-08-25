@@ -1,3 +1,6 @@
+from User.super_admin_func import after_login_super
+
+from for_print import error, enter, success, prints, command, re_enter
 
 from db_settings import Database, execute_query
 
@@ -8,11 +11,11 @@ def type_analyzer(user_type: int):
     """
     queries = "SELECT * FROM user WHERE type=%s"
     params = (user_type,)
-    data = execute_query(queries, params)
+    data = execute_query(query=queries, params=params, fetch="one")
     return data.get("type")
 
 
-def after_login(user_type: int, email: str, super_admin: bool=False):
+def after_login(user_type: int=None, email: str=None, super_admin: bool=False):
     """
     Function to handle after login status.
     """
@@ -27,6 +30,9 @@ def after_login(user_type: int, email: str, super_admin: bool=False):
 
         elif user_type == "User":
             pass
+
+    else:
+        after_login_super()
 
 
 def main():
@@ -48,3 +54,6 @@ def main():
 
         else:
             print(error + "Invalid choice. Please try again.")
+
+
+after_login(super_admin=True)
