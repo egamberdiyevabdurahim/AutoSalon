@@ -57,7 +57,7 @@ def login():
         # Fetch user data from the database
         user_query = "SELECT * FROM user WHERE username=%s AND password=%s"
         user_params = (username, password)
-        user_data = execute_query(user_query, user_params)
+        user_data = execute_query(user_query, user_params, "one")
 
         if user_data:
             user_type = user_data.get("type")
