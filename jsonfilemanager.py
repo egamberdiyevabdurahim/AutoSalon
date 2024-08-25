@@ -3,7 +3,7 @@ import os
 
 
 class JSONFIleManager:
-    def __init__(self, filename):
+    def __init__(self, filename: str):
         self.filename = filename
 
     def load_data(self) -> list:
