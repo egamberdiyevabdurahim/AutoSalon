@@ -1,7 +1,6 @@
 from for_print import error, enter, re_enter, success, prints, command
-from jsonfilemanager import JSONFIleManager
 from db_settings import Database, execute_query
-from User.super_admin_func import SuperAdmin
+from User.super_admin_func import after_login_super
 
 
 # super_admin user = super
@@ -41,7 +40,7 @@ def after_login(user_type: int, email: str, super_admin: bool = False):
 
     else:
         # Handle super admin actions
-        SuperAdmin.after_login_super()
+        after_login_super()
 
 
 def login():
